@@ -84,14 +84,23 @@ export default function App() {
     // fallbackLabel ?: string;
 
     // Authenticate use with Biometrics (Fingerprint, Facial recognition, Iris recognition)
-    const biometricPrompt = await LocalAuthentication.authenticateAsync(
-      'Touch the screen to'
-    );
+    let promptMessage;
+    supportedBiometrics === 1
+      ? (promptMessage = 'Please touch sensor when ready')
+      : 'Use face recognition';
+
+    const biometricAuth = await LocalAuthentication.authenticateAsync({
+      promptMessage: 'Login with Biometrics',
+      cancelLabel: 'Cancel',
+      disableDeviceFallback: true,
+    });
+    // Log the user in on success
+    if (biometricAuth) console.log('success');
 
     console.log({ isBiometricAvailable });
     console.log({ supportedBiometrics });
     console.log({ savedBiometrics });
-    console.log({ biometricPrompt });
+    console.log({ biometricAuth });
   };
 
   return (
