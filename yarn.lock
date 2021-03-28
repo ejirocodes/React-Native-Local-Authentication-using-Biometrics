@@ -1730,6 +1730,11 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
+"@react-native-community/hooks@^2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/hooks/-/hooks-2.6.0.tgz#dd5f19601eb3684c6bcdd3df3d0c04cf44c24cff"
+  integrity sha512-emBGKvhJ0h++lLJQ5ejsj+od9G67nEaihjvfSx7/JWvNrQGAhP9U0OZqgb9dkKzor9Ufaj9SGt8RNY97cGzttw==
+
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.3.tgz#4ba8ddb720221f432e443bd5f9117fd22cfd4762"
@@ -3023,6 +3028,13 @@ expo-linking@~2.0.1:
     invariant "^2.2.4"
     qs "^6.5.0"
     url-parse "^1.4.4"
+
+expo-local-authentication@~9.5.0:
+  version "9.5.0"
+  resolved "https://registry.yarnpkg.com/expo-local-authentication/-/expo-local-authentication-9.5.0.tgz#541167186539cb4af288cdeaf8460053922b42eb"
+  integrity sha512-d7T8cfXNig8rpyiw4u/2vHj2zhtThOTxrLUwx4GqFxDYqFyOJ5q5Q3lXFd10Tr5paMQvnskS0fAj70aG7Eb76g==
+  dependencies:
+    invariant "^2.2.4"
 
 expo-location@~10.0.0:
   version "10.0.0"
