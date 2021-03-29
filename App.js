@@ -1,41 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
-  TextInput,
   View,
-  ScrollView,
   SafeAreaView,
-  RefreshControl,
   Button,
-  Image,
-  TouchableOpacity,
   TouchableHighlight,
   Alert,
-  BackHandler,
-  Platform,
-  Dimensions,
+  StatusBar as RnStatusBar,
 } from 'react-native';
-import { useDeviceOrientation } from '@react-native-community/hooks';
 import * as LocalAuthentication from 'expo-local-authentication';
 
-const wait = (timeout) => {
-  return new Promise((resolve) => setTimeout(resolve, timeout));
-};
-
 export default function App() {
-  const [refreshing, setRefreshing] = useState(false);
-  const { portrait, landscape } = useDeviceOrientation();
+  const [isBiometricSupported, setIsBiometricSupported] = useState(false);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
-  const onPressLearnMore = () => {
-    alert('Learn More Pressed', Dimensions.get('screen'));
-  };
+  // Check if hardware supports biometrics
+  useEffect(() => {
+    (async () => {
+      const compatible = await LocalAuthentication.hasHardwareAsync();
+      setIsBiometricSupported(compatible);
+    })();
+  });
 
   const fallBackToDefaultAuth = () => {
     console.log('fall back to password authentication');
@@ -72,22 +58,13 @@ export default function App() {
     const savedBiometrics = await LocalAuthentication.isEnrolledAsync();
     if (!savedBiometrics)
       return alertComponent(
-        'Biometric not registered',
+        'Biometric record not found',
         'Please login with your password',
         'OK',
         () => fallBackToDefaultAuth()
       );
 
-    //  promptMessage?: string;
-    // cancelLabel?: string;
-    // disableDeviceFallback?: boolean;
-    // fallbackLabel ?: string;
-
     // Authenticate use with Biometrics (Fingerprint, Facial recognition, Iris recognition)
-    let promptMessage;
-    supportedBiometrics === 1
-      ? (promptMessage = 'Please touch sensor when ready')
-      : 'Use face recognition';
 
     const biometricAuth = await LocalAuthentication.authenticateAsync({
       promptMessage: 'Login with Biometrics',
@@ -102,100 +79,38 @@ export default function App() {
     console.log({ savedBiometrics });
     console.log({ biometricAuth });
   };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View style={styles.container}>
-          {/* <Text
-            accessibilityLabel="Welcome note"
-            numberOfLines={1}
-            onLongPress={() => alert('Text pressed')}
-          >
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde
-            perspiciatis nobis non voluptatibus tenetur fuga magni accusamus.
-            Atque minima laboriosam
-          </Text>
-          <TouchableOpacity onPress={() => alert('Image pressed')}>
-            <Image
-              resizeMode="contain"
-              loadingIndicatorSource={require('./assets/adaptive-icon.png')}
-              fadeDuration={1299}
-              source={{
-                width: 200,
-                height: 200,
-                uri: 'https://picsum.photos/200',
-              }}
-            />
-          </TouchableOpacity>
-          <TouchableHighlight
-            underlayColor="white"
-            onPress={() => alert('Image pressed')}
-          >
-            <Image
-              resizeMode="contain"
-              loadingIndicatorSource={require('./assets/adaptive-icon.png')}
-              fadeDuration={1299}
-              source={{
-                width: 200,
-                height: 200,
-                uri: 'https://picsum.photos/200',
-              }}
-            />
-          </TouchableHighlight>
-          <TextInput style={styles.textInput} placeholder="Type here" />
-          <Button
-            onPress={onPressLearnMore}
-            title="Learn More"
-            color="#841584"
-            accessibilityLabel="Learn more about this purple button"
-          />
-          <Button
-            title="Press me"
-            onPress={() =>
-              Alert.alert('Simple Button pressed', 'Hello', [
-                {
-                  text: 'Cancel',
-                },
-                {
-                  text: 'OK',
-                  onPress: () => BackHandler.exitApp(),
-                },
-              ])
-            }
-          />
-          <Text>ipsum dolor, sit amet consectetu</Text>
-          <View
-            style={{ backgroundColor: 'dodgerblue', width: '50%', height: 70 }}
-          ></View> */}
+    <SafeAreaView>
+      <View style={styles.container}>
+        <Text>
+          {isBiometricSupported
+            ? 'Your device is compatible with Biometrics'
+            : 'Face or Fingerprint scanner is available on this device'}
+        </Text>
+
+        <TouchableHighlight
+          style={{
+            height: 60,
+          }}
+        >
           <Button
             title="Login with Biometrics"
-            color="#000"
+            color="#fe7005"
             onPress={handleBiometricAuth}
           />
-          <StatusBar style="auto" />
-        </View>
-      </ScrollView>
+        </TouchableHighlight>
+
+        <StatusBar style="auto" />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   container: {
+    paddingTop: RnStatusBar.currentHeight,
     flex: 1,
-    backgroundColor: '#eee',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingLeft: 20,
+    paddingRight: 20,
   },
-  textInput: {},
 });
